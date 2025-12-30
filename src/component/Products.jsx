@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 function Products() {
   const products = [
@@ -32,26 +32,34 @@ function Products() {
     },
   ];
 
+  // 🛒 Cart State
+  const [cart, setCart] = useState([]);
+
+  const handleBuy = (product) => {
+    setCart([...cart, product]);
+  };
+
+  // ❌ Remove from cart
+  const handleRemove = (indexToRemove) => {
+    const updatedCart = cart.filter((_, index) => index !== indexToRemove);
+    setCart(updatedCart);
+  };
+
   const containerStyle = {
     position: "relative",
     minHeight: "100vh",
     padding: "40px 20px",
     textAlign: "center",
     color: "#fff",
-    overflow: "hidden",
     backgroundImage:
-      "url('https://images.unsplash.com/photo-1605702128851-d2b6b3f6e2f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218fHxjcmNrZXR8fHx8fHwxNjg4NDEyNjQ4&ixlib=rb-4.0.3&q=80&w=1080')",
+      "url('https://images.unsplash.com/photo-1605702128851-d2b6b3f6e2f5')",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
   };
 
   const overlayStyle = {
     position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
+    inset: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
     backdropFilter: "blur(8px)",
     zIndex: 1,
@@ -60,69 +68,93 @@ function Products() {
   const contentStyle = {
     position: "relative",
     zIndex: 2,
-    maxWidth: "600px",
-    margin: "0 auto",
-  };
-
-  const listStyle = {
-    listStyle: "none",
-    padding: 0,
-    margin: "30px 0",
+    maxWidth: "650px",
+    margin: "auto",
   };
 
   const itemStyle = {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
     gap: "15px",
-    backgroundColor: "rgba(255, 255, 255, 0.1)",
-    margin: "10px 0",
+    backgroundColor: "rgba(255,255,255,0.1)",
+    margin: "12px 0",
     padding: "12px",
     borderRadius: "10px",
-    boxShadow: "0 0 10px #00f, 0 0 20px #0ff",
-    fontSize: "16px",
-    color: "#fff",
-    transition: "transform 0.3s, box-shadow 0.3s",
-  };
-
-  const imageStyle = {
-    width: "80px",
-    height: "80px",
-    objectFit: "cover",
-    borderRadius: "6px",
-    boxShadow: "0 0 8px #00f, 0 0 15px #0ff",
-  };
-
-  const itemHoverStyle = {
-    transform: "scale(1.05)",
-    boxShadow: "0 0 20px #00f, 0 0 40px #0ff",
+    boxShadow: "0 0 10px cyan",
   };
 
   return (
     <div style={containerStyle}>
       <div style={overlayStyle}></div>
+
       <div style={contentStyle}>
-        <h2 style={{ textShadow: "0 0 10px #00f, 0 0 20px #0ff" }}>Our Products</h2>
-        <ul style={listStyle}>
-          {products.map((product) => (
-            <li
-              key={product.id}
-              style={itemStyle}
-              onMouseEnter={(e) =>
-                Object.assign(e.currentTarget.style, itemHoverStyle)
-              }
-              onMouseLeave={(e) => Object.assign(e.currentTarget.style, itemStyle)}
-            >
-              <img src={product.image} alt={product.name} style={imageStyle} />
-              <div>
-                <strong>{product.name}</strong>
-                <div>{product.price}</div>
+        <h2 style={{ textShadow: "0 0 15px cyan" }}>Our Products</h2>
+
+        {/* 🛒 Cart Count */}
+        <p>
+          🛒 Cart Items: <strong>{cart.length}</strong>
+        </p>
+
+        {/* PRODUCTS */}
+        {products.map((product) => (
+          <div key={product.id} style={itemStyle}>
+            <img
+              src={product.image}
+              alt={product.name}
+              style={{ width: 70, borderRadius: 6 }}
+            />
+
+            <div style={{ flex: 1, textAlign: "left" }}>
+              <strong>{product.name}</strong>
+              <div>{product.price}</div>
+            </div>
+
+            <button onClick={() => handleBuy(product)} style={btnStyle}>
+              Buy
+            </button>
+          </div>
+        ))}
+
+        {/* CART ITEMS */}
+        {cart.length > 0 && (
+          <>
+            <h3 style={{ marginTop: 30 }}>Cart Items</h3>
+
+            {cart.map((item, index) => (
+              <div key={index} style={itemStyle}>
+                <span>{item.name}</span>
+                <button
+                  onClick={() => handleRemove(index)}
+                  style={removeBtnStyle}
+                >
+                  ❌ Remove
+                </button>
               </div>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
 }
+
+const btnStyle = {
+  padding: "8px 16px",
+  background: "cyan",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
+
+const removeBtnStyle = {
+  padding: "6px 12px",
+  background: "red",
+  color: "#fff",
+  border: "none",
+  borderRadius: "6px",
+  cursor: "pointer",
+};
 
 export default Products;

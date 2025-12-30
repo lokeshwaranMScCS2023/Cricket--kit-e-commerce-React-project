@@ -1,11 +1,53 @@
-import React from 'react';
+import React, { useState } from "react";
 
 function Reviews() {
-  const reviews = [
-    { id: 1, name: "Rahul", review: "Excellent quality bat!", image: "https://www.cricgram.com/wp-content/uploads/2019/08/KL-Rahul.jpg" },
-    { id: 2, name: "Arjun", review: "Fast delivery and good service.", image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/585.png" },
-    { id: 3, name: "Karthik", review: "Best cricket store online.", image: "https://studybizz.com/sports/wp-content/uploads/2024/03/image-131-1024x1024.png" }
-  ];
+  const [reviews, setReviews] = useState([
+    {
+      id: 1,
+      name: "Rahul",
+      review: "Excellent quality bat!",
+      image: "https://www.cricgram.com/wp-content/uploads/2019/08/KL-Rahul.jpg",
+    },
+    {
+      id: 2,
+      name: "Arjun",
+      review: "Fast delivery and good service.",
+      image: "https://documents.iplt20.com/ipl/IPLHeadshot2025/585.png",
+    },
+    {
+      id: 3,
+      name: "Karthik",
+      review: "Best cricket store online.",
+      image: "https://studybizz.com/sports/wp-content/uploads/2024/03/image-131-1024x1024.png",
+    },
+  ]);
+
+  const [name, setName] = useState("");
+  const [reviewText, setReviewText] = useState("");
+  const [image, setImage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!name || !reviewText) {
+      alert("Please fill name and review");
+      return;
+    }
+
+    const newReview = {
+      id: Date.now(),
+      name,
+      review: reviewText,
+      image:
+        image ||
+        "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    };
+
+    setReviews([newReview, ...reviews]);
+    setName("");
+    setReviewText("");
+    setImage("");
+  };
 
   const containerStyle = {
     position: "relative",
@@ -15,18 +57,14 @@ function Reviews() {
     color: "#fff",
     overflow: "hidden",
     backgroundImage:
-      "url('https://images.unsplash.com/photo-1605702128851-d2b6b3f6e2f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxfDB8MXxyYW5kb218fHxjcmNrZXR8fHx8fHwxNjg4NDEyNjQ4&ixlib=rb-4.0.3&q=80&w=1080')",
+      "url('https://images.unsplash.com/photo-1605702128851-d2b6b3f6e2f5')",
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
   };
 
   const overlayStyle = {
     position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
+    inset: 0,
     backgroundColor: "rgba(0,0,0,0.5)",
     backdropFilter: "blur(8px)",
     zIndex: 1,
@@ -35,8 +73,8 @@ function Reviews() {
   const contentStyle = {
     position: "relative",
     zIndex: 2,
-    maxWidth: "600px",
-    margin: "0 auto",
+    maxWidth: "650px",
+    margin: "auto",
   };
 
   const reviewStyle = {
@@ -48,7 +86,7 @@ function Reviews() {
     margin: "15px 0",
     boxShadow: "0 0 10px #00f, 0 0 20px #0ff",
     gap: "12px",
-    transition: "transform 0.3s, box-shadow 0.3s",
+    transition: "0.3s",
   };
 
   const imgStyle = {
@@ -56,33 +94,47 @@ function Reviews() {
     height: "60px",
     borderRadius: "50%",
     objectFit: "cover",
-    boxShadow: "0 0 8px #00f, 0 0 15px #0ff",
-  };
-
-  const textStyle = {
-    textAlign: "left",
-  };
-
-  const reviewHoverStyle = {
-    transform: "scale(1.05)",
-    boxShadow: "0 0 20px #00f, 0 0 40px #0ff",
   };
 
   return (
     <div style={containerStyle}>
       <div style={overlayStyle}></div>
+
       <div style={contentStyle}>
-        <h2 style={{ textShadow: "0 0 10px #00f, 0 0 20px #0ff" }}>Customer Reviews</h2>
-        {reviews.map(r => (
-          <div
-            key={r.id}
-            style={reviewStyle}
-            onMouseEnter={e => Object.assign(e.currentTarget.style, reviewHoverStyle)}
-            onMouseLeave={e => Object.assign(e.currentTarget.style, reviewStyle)}
-          >
+        <h2 style={{ textShadow: "0 0 15px cyan" }}>Customer Reviews</h2>
+
+        {/* ⭐ Add Review Form */}
+        <form onSubmit={handleSubmit} style={{ marginBottom: "30px" }}>
+          <input
+            type="text"
+            placeholder="Your Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={inputStyle}
+          />
+          <textarea
+            placeholder="Your Review"
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            style={inputStyle}
+          />
+          <input
+            type="text"
+            placeholder="Image URL (optional)"
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            style={inputStyle}
+          />
+          <button style={btnStyle}>Submit Review</button>
+        </form>
+
+        {/* ⭐ Reviews List */}
+        {reviews.map((r) => (
+          <div key={r.id} style={reviewStyle}>
             <img src={r.image} alt={r.name} style={imgStyle} />
-            <div style={textStyle}>
-              <strong>{r.name}:</strong> <br /> {r.review}
+            <div style={{ textAlign: "left" }}>
+              <strong>{r.name}</strong>
+              <p>{r.review}</p>
             </div>
           </div>
         ))}
@@ -90,5 +142,22 @@ function Reviews() {
     </div>
   );
 }
+
+const inputStyle = {
+  width: "100%",
+  padding: "10px",
+  margin: "8px 0",
+  borderRadius: "6px",
+  border: "none",
+};
+
+const btnStyle = {
+  padding: "10px 20px",
+  border: "none",
+  borderRadius: "6px",
+  background: "cyan",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
 
 export default Reviews;
